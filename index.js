@@ -56,8 +56,10 @@ function dev (opts) {
 
   return async function logger (ctx, next) {
     // request
-    const start = Date.now()
-    print('  ' + chalk.gray('<--') +
+    const startDate = new Date()
+    const start = startDate.getTime()
+    print(startDate.toISOString() +
+      '  ' + chalk.gray('<--') +
       ' ' + chalk.bold('%s') +
       ' ' + chalk.gray('%s'),
         ctx.method,
@@ -129,7 +131,9 @@ function log (print, ctx, start, len, err, event) {
     : event === 'close' ? chalk.yellow('-x-')
     : chalk.gray('-->')
 
-  print('  ' + upstream +
+  const endDate = new Date()
+  print(endDate.toISOString() +
+    '  ' + upstream +
     ' ' + chalk.bold('%s') +
     ' ' + chalk.gray('%s') +
     ' ' + chalk[color]('%s') +
@@ -138,7 +142,7 @@ function log (print, ctx, start, len, err, event) {
       ctx.method,
       ctx.originalUrl,
       status,
-      time(start),
+      time(start, endDate),
       length)
 }
 
@@ -148,8 +152,8 @@ function log (print, ctx, start, len, err, event) {
  * in seconds otherwise.
  */
 
-function time (start) {
-  const delta = Date.now() - start
+function time (start, endDate) {
+  const delta = endDate.getTime() - start
   return humanize(delta < 10000
     ? delta + 'ms'
     : Math.round(delta / 1000) + 's')
